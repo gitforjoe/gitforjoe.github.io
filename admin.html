@@ -229,48 +229,44 @@
 
             <div class="stats-grid">
                 <div class="stat-card">
-                    <h4>New Leads (This Week)</h4>
-                    <div class="value">14</div>
+                    <h4>Total Leads</h4>
+                    <div class="value" id="statTotal">0</div>
                 </div>
                 <div class="stat-card">
-                    <h4>Active Projects</h4>
-                    <div class="value">8</div>
+                    <h4>New (Unread)</h4>
+                    <div class="value" id="statNew">0</div>
                 </div>
                 <div class="stat-card">
-                    <h4>AI Integrations Running</h4>
-                    <div class="value">32</div>
+                    <h4>Contacted</h4>
+                    <div class="value" id="statContacted">0</div>
                 </div>
             </div>
 
             <div class="recent-activity">
-                <h3>Recent Contact Submissions</h3>
-                <ul class="activity-list">
-                    <li class="activity-item">
-                        <div class="activity-info">
-                            <strong>Sarah Jenkins — TechFlow Inc.</strong>
-                            <span>"Looking to automate our customer service pipeline..."</span>
-                        </div>
-                        <div class="activity-status">New</div>
-                    </li>
-                    <li class="activity-item">
-                        <div class="activity-info">
-                            <strong>Marcus V. — Global Retail</strong>
-                            <span>"Need consulting on predictive analytics for Q4."</span>
-                        </div>
-                        <div class="activity-status" style="background: var(--bg-surface-alt); color: var(--text-secondary); border: 1px solid var(--border-default);">Reviewed</div>
-                    </li>
-                    <li class="activity-item">
-                        <div class="activity-info">
-                            <strong>Elena Rodriguez — StartupX</strong>
-                            <span>"We have a massive dataset and need to extract insights..."</span>
-                        </div>
-                        <div class="activity-status">New</div>
-                    </li>
-                </ul>
+                <h3>Lead Manager</h3>
+                <div class="leads-controls">
+                    <div class="filter-pills">
+                        <button class="filter-pill active" data-filter="all">All</button>
+                        <button class="filter-pill" data-filter="new">New</button>
+                        <button class="filter-pill" data-filter="reviewed">Reviewed</button>
+                        <button class="filter-pill" data-filter="contacted">Contacted</button>
+                        <button class="filter-pill" data-filter="archived">Archived</button>
+                    </div>
+                    <button class="export-btn" id="exportCsvBtn">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+                        Export CSV
+                    </button>
+                </div>
+                <div id="leadsContainer">
+                    <!-- Leads will be rendered dynamically by admin.js -->
+                </div>
             </div>
         </div>
     </div>
 
+    <!-- Firebase SDK (Compat Version) -->
+    <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore-compat.js"></script>
     <script src="admin.js"></script>
 </body>
 </html>

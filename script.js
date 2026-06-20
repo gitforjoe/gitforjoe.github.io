@@ -136,28 +136,159 @@ document.addEventListener('DOMContentLoaded', () => {
         statsObserver.observe(heroStats);
     }
 
-    // --- Contact Form ---
-    window.handleSubmit = (e) => {
+    // --- Firebase Initialization ---
+    const firebaseConfig = {
+        apiKey: "AIzaSyDcZKBXHaL_sQmKwKiexaX69jQ028qpUqg",
+        authDomain: "hpn-project-da088.firebaseapp.com",
+        projectId: "hpn-project-da088",
+        storageBucket: "hpn-project-da088.firebasestorage.app",
+        messagingSenderId: "414937667806",
+        appId: "1:414937667806:web:d65eafb25c7459631f8a4f"
+    };
+    if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+    }
+    const db = firebase.firestore();
+
+    // --- Contact Form → Firebase Lead Storage ---
+    window.handleSubmit = async (e) => {
         e.preventDefault();
 
         const form = document.getElementById('contactForm');
         const submitBtn = document.getElementById('submitBtn');
 
+        // Collect form data
+        const name = document.getElementById('name').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const company = document.getElementById('company').value.trim();
+        const message = document.getElementById('message').value.trim();
+
         submitBtn.disabled = true;
         submitBtn.textContent = 'Sending...';
         submitBtn.style.opacity = '0.7';
 
-        // Simulate submission (replace with real API)
-        setTimeout(() => {
-            form.innerHTML = `
-                <div class="form-success">
-                    <div class="success-icon">✓</div>
-                    <h3>Message Sent</h3>
-                    <p>Thanks for reaching out. Joe and Lenny will get back to you within 24 hours.</p>
-                </div>
-            `;
-        }, 1200);
+        // Build lead object
+        const lead = {
+            name: name,
+            email: email,
+            company: company || 'Not specified',
+            message: message,
+            status: 'new',
+            timestamp: new Date().toISOString()
+        };
+
+        try {
+            // Save to Firestore
+            await db.collection('leads').add(lead);
+
+            // Show success
+            setTimeout(() => {
+                form.innerHTML = `
+                    <div class="form-success">
+                        <div class="success-icon">✓</div>
+                        <h3>Message Sent</h3>
+                        <p>Thanks for reaching out. Joe and Lenny will get back to you within 24 hours.</p>
+                    </div>
+                `;
+            }, 1200);
+        } catch (error) {
+            console.error("Error adding document: ", error);
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Send Message';
+            submitBtn.style.opacity = '1';
+            alert('There was an error sending your message. Please try again.');
+        }
     };
+
+    // --- ROI Calculator ---
+    const teamSizeSlider = document.getElementById('teamSize');
+    const manualHoursSlider = document.getElementById('manualHours');
+    const hourlyWageSlider = document.getElementById('hourlyWage');
+
+    if (teamSizeSlider && manualHoursSlider && hourlyWageSlider) {
+        const EFFICIENCY_GAIN = 0.40; // 40% automation rate
+
+        const teamSizeDisplay = document.getElementById('teamSizeValue');
+        const manualHoursDisplay = document.getElementById('manualHoursValue');
+        const hourlyWageDisplay = document.getElementById('hourlyWageValue');
+        const hoursSavedOutput = document.getElementById('roiHoursSaved');
+        const costSavedOutput = document.getElementById('roiCostSaved');
+        const summaryOutput = document.getElementById('roiSummary');
+
+        const formatNumber = (num) => num.toLocaleString('en-US');
+
+        const calculateROI = () => {
+            const team = parseInt(teamSizeSlider.value);
+            const hours = parseInt(manualHoursSlider.value);
+            const wage = parseInt(hourlyWageSlider.value);
+
+            // Update slider labels
+            teamSizeDisplay.textContent = team + (team === 1 ? ' employee' : ' employees');
+            manualHoursDisplay.textContent = hours + ' hrs';
+            hourlyWageDisplay.textContent = '$' + wage;
+
+            // Calculate
+            const weeklyManualHoursTotal = team * hours;
+            const annualManualHours = weeklyManualHoursTotal * 52;
+            const annualHoursSaved = Math.round(annualManualHours * EFFICIENCY_GAIN);
+            const annualCostSaved = Math.round(annualHoursSaved * wage);
+
+            // Animate output values
+            hoursSavedOutput.textContent = formatNumber(annualHoursSaved);
+            costSavedOutput.textContent = '$' + formatNumber(annualCostSaved);
+
+            // Pop animation
+            hoursSavedOutput.classList.remove('updated');
+            costSavedOutput.classList.remove('updated');
+            void hoursSavedOutput.offsetWidth; // trigger reflow
+            hoursSavedOutput.classList.add('updated');
+            costSavedOutput.classList.add('updated');
+
+            // Update summary text
+            summaryOutput.innerHTML = `By automating <strong>40%</strong> of your team's manual workload, you could save an estimated <strong>${formatNumber(annualHoursSaved)} hours</strong> and <strong>$${formatNumber(annualCostSaved)}</strong> per year.`;
+
+            // Store for CTA use
+            window._roiData = { team, hours, wage, annualHoursSaved, annualCostSaved };
+        };
+
+        teamSizeSlider.addEventListener('input', calculateROI);
+        manualHoursSlider.addEventListener('input', calculateROI);
+        hourlyWageSlider.addEventListener('input', calculateROI);
+
+        // Initial calculation
+        calculateROI();
+
+        // CTA button → auto-fill contact form and scroll
+        const roiCtaBtn = document.getElementById('roiCtaBtn');
+        if (roiCtaBtn) {
+            roiCtaBtn.addEventListener('click', () => {
+                const d = window._roiData;
+                const autoMessage = `Hi Joe & Lenny,\n\nOur team of ${d.team} spends around ${d.hours} hours/week per person on manual tasks. Based on your ROI calculator, we could potentially save ${formatNumber(d.annualHoursSaved)} hours and $${formatNumber(d.annualCostSaved)} annually through AI automation.\n\nWe'd love to discuss how HighPerformerNetwork can help us scale.`;
+
+                const messageField = document.getElementById('message');
+                if (messageField) {
+                    messageField.value = autoMessage;
+                }
+
+                // Scroll to contact
+                const contactSection = document.getElementById('contact');
+                if (contactSection) {
+                    const navHeight = navbar.offsetHeight;
+                    const targetPosition = contactSection.getBoundingClientRect().top + window.pageYOffset - navHeight;
+                    window.scrollTo({
+                        top: targetPosition,
+                        behavior: 'smooth'
+                    });
+
+                    // Focus the name field after scroll
+                    setTimeout(() => {
+                        const nameField = document.getElementById('name');
+                        if (nameField) nameField.focus();
+                    }, 800);
+                }
+            });
+        }
+    }
 
     // --- Active nav link highlighting ---
     const sections = document.querySelectorAll('section[id]');

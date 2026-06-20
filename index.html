@@ -339,6 +339,68 @@
         </div>
     </section>
 
+    <!-- ROI Calculator Section -->
+    <section id="roi" class="section roi-section">
+        <div class="container">
+            <div class="section-header animate-on-scroll">
+                <span class="section-tag">Calculate Your ROI</span>
+                <h2 class="section-title">See what AI can<br><span class="gradient-text">save you.</span></h2>
+            </div>
+            <div class="roi-wrapper">
+                <div class="roi-calculator animate-on-scroll">
+                    <div class="roi-sliders">
+                        <div class="slider-group">
+                            <div class="slider-header">
+                                <span class="slider-label">Team Size</span>
+                                <span class="slider-value" id="teamSizeValue">10 employees</span>
+                            </div>
+                            <input type="range" class="roi-range" id="teamSize" min="1" max="100" value="10">
+                        </div>
+                        <div class="slider-group">
+                            <div class="slider-header">
+                                <span class="slider-label">Weekly Manual Hours per Employee</span>
+                                <span class="slider-value" id="manualHoursValue">15 hrs</span>
+                            </div>
+                            <input type="range" class="roi-range" id="manualHours" min="5" max="40" value="15">
+                        </div>
+                        <div class="slider-group">
+                            <div class="slider-header">
+                                <span class="slider-label">Average Hourly Wage</span>
+                                <span class="slider-value" id="hourlyWageValue">$45</span>
+                            </div>
+                            <input type="range" class="roi-range" id="hourlyWage" min="20" max="150" value="45">
+                        </div>
+                    </div>
+                    <div class="roi-divider"></div>
+                    <div class="roi-results">
+                        <div class="roi-result-card">
+                            <div class="roi-result-label">Annual Hours Saved</div>
+                            <div class="roi-result-value" id="roiHoursSaved">3,120</div>
+                            <div class="roi-result-unit">hours / year</div>
+                        </div>
+                        <div class="roi-result-card">
+                            <div class="roi-result-label">Annual Cost Savings</div>
+                            <div class="roi-result-value" id="roiCostSaved">$140,400</div>
+                            <div class="roi-result-unit">estimated savings / year</div>
+                        </div>
+                    </div>
+                    <div class="roi-summary" id="roiSummary">
+                        By automating <strong>40%</strong> of your team's manual workload, you could save an estimated
+                        <strong>3,120 hours</strong> and <strong>$140,400</strong> per year.
+                    </div>
+                    <div class="roi-cta">
+                        <button class="btn btn-primary" id="roiCtaBtn">
+                            Book Your AI Strategy Call
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M5 12h14M12 5l7 7-7 7" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- CTA / Contact Section -->
     <section id="contact" class="section contact-section">
         <div class="container">
@@ -419,6 +481,9 @@
         </div>
     </footer>
 
+    <!-- Firebase SDK (Compat Version) -->
+    <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore-compat.js"></script>
     <script src="script.js"></script>
 </body>
 
